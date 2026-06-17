@@ -1,0 +1,9 @@
+{
+  "name": "@eduflow/shared",
+  "version": "1.0.0",
+  "main": "src/landing.ts",
+  "exports": {
+    ".": "./src/landing.ts",
+    "./landing": "./src/landing.ts"
+  }
+}
