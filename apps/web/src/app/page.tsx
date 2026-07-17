@@ -156,6 +156,7 @@ export default function LandingPage() {
     >
       
       {/* Nav Link Bar */}
+      {/* Nav Link Bar */}
       <nav className={`backdrop-blur-md border-b-4 h-20 flex-shrink-0 z-50 transition-colors duration-500 ${isDark ? 'bg-black/10 border-white/10' : 'bg-white/80 border-[#C4B5FD]'}`}>
         <div className="mx-auto max-w-7xl h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -171,22 +172,16 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 sm:gap-4">
             <Link href="/forum" className={`hidden md:block text-sm font-bold transition-colors ${isDark ? 'text-white/90 hover:text-white' : 'text-[#7C3AED]'}`}>💬 Community</Link>
             <Link href="/leaderboard" className={`hidden md:block text-sm font-bold transition-colors ${isDark ? 'text-white/90 hover:text-white' : 'text-[#7C3AED]'}`}>🏆 Leaderboard</Link>
-            {session ? (
-              <Link href="/dashboard">
-                <Button className={`rounded-full font-bold px-4 py-2 text-xs sm:text-sm shadow-md ${isDark ? 'bg-white text-neutral-900 hover:bg-neutral-100' : 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white'}`}>My Dashboard 🚀</Button>
+            
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link href="/account/signin" className={`text-xs sm:text-sm font-bold transition-colors px-1 ${isDark ? 'text-white/90' : 'text-[#7C3AED]'}`}>Log In</Link>
+              <Link href="/account/signup">
+                <Button className={`rounded-full font-bold px-4 py-2 text-xs sm:text-sm shadow-md ${isDark ? 'bg-white text-neutral-900 hover:bg-neutral-100' : 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white'}`}>Join Free! 🎉</Button>
               </Link>
-            ) : (
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Link href="/account/signin" className={`text-xs sm:text-sm font-bold transition-colors px-1 ${isDark ? 'text-white/90' : 'text-[#7C3AED]'}`}>Log In</Link>
-                <Link href="/account/signup">
-                  <Button className={`rounded-full font-bold px-4 py-2 text-xs sm:text-sm shadow-md ${isDark ? 'bg-white text-neutral-900 hover:bg-neutral-100' : 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white'}`}>Join Free! 🎉</Button>
-                </Link>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </nav>
-
       {/* Main Responsive Slider Container */}
       <div 
         ref={scrollRef}

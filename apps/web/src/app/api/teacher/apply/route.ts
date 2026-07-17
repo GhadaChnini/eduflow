@@ -1,26 +1,43 @@
+import { NextResponse } from 'next/server';
 import sql from '@/app/api/utils/sql';
+import { randomUUID } from 'crypto';
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { name, email, bio } = body || {};
+    const formData = await request.formData();
+    
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const bio = formData.get('bio') as string;
 
-    // Validate that the required fields are filled out
     if (!name || !email || !bio) {
-      return Response.json({ error: 'Missing required profile fields' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing required field details.' },
+        { status: 400 }
+      );
     }
 
-    // Generate a standard UUID string pattern to match database format expectations perfectly
-    const id = typeof window === 'undefined' ? require('crypto').randomUUID() : self.crypto.randomUUID();
+    // Generate a unique ID to satisfy the database 'id' NOT NULL constraint
+    const id = randomUUID();
 
-    // Insert the public form details straight into your teacher_application database table queue
+    // Insert the data into the teacher_application table
     await sql`
-      INSERT INTO "teacher_application" (id, name, email, bio, status, "createdAt")
-      VALUES (${id}, ${name}, ${email}, ${bio}, 'pending', NOW())
+      INSERT INTO "teacher_application" 
+      (id, name, email, bio, status, "createdAt") 
+      VALUES 
+      (${id}, ${name}, ${email}, ${bio}, 'pending', NOW())
     `;
 
-    return Response.json({ success: true, message: 'Application queued!' });
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Application processed successfully!' 
+    });
+
   } catch (error: any) {
-    return Response.json({ error: error.message || 'Internal error' }, { status: 500 });
+    console.error('Submission Error:', error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    );
   }
 }

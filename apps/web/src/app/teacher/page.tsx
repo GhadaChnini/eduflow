@@ -29,7 +29,8 @@ export default function TeacherGatewayPage() {
         toast.error(error.message || 'Invalid credentials. Please try again.');
       } else {
         toast.success('Welcome back to your workspace! 🍎');
-        router.push('/teacher/dashboard');
+        // Redirects to your new dashboard
+        router.push('/teacher/control-panel');
       }
     } catch (err) {
       toast.error('An unexpected authentication error occurred.');
@@ -39,10 +40,9 @@ export default function TeacherGatewayPage() {
   };
 
   return (
-    /* FIXED OVERFLOW: Changed h-screen to min-h-screen and removed overflow-hidden so users can scroll down on mobile viewports */
     <div className="min-h-screen w-full font-nunito flex flex-col md:flex-row select-none pb-12 md:pb-0" style={{ background: 'linear-gradient(135deg, #FAF5FF 0%, #FEF9F0 100%)' }}>
       
-      {/* Left Column: Eye-Catching Promotional Card / Info Split */}
+      {/* Left Column */}
       <div className="flex-shrink-0 flex flex-col justify-center p-8 lg:p-16 bg-gradient-to-br from-[#7C3AED] to-[#EC4899] text-white relative overflow-hidden md:max-w-xl md:min-h-screen">
         <div className="absolute top-[-20%] right-[-20%] w-96 h-96 bg-white/10 rounded-full blur-3xl" />
         <div className="absolute bottom-[-10%] left-[-10%] w-72 h-72 bg-black/10 rounded-full blur-2xl" />
@@ -71,10 +71,9 @@ export default function TeacherGatewayPage() {
         </div>
       </div>
 
-      {/* Right Column: Interaction Form Gate */}
-      {/* FIXED WRAPPER: Changed md:h-full to items-start or center with explicit padding top/bottom to handle mobile webview limits */}
+      {/* Right Column: Interaction Form */}
       <div className="flex-1 flex flex-col justify-start md:justify-center items-center p-4 sm:p-12">
-        <Card className="w-full max-w-md border-4 border-[#C4B5FD] bg-white shadow-2xl rounded-3xl overflow-hidden transform transition-transform duration-150">
+        <Card className="w-full max-w-md border-4 border-[#C4B5FD] bg-white shadow-2xl rounded-3xl overflow-hidden">
           <div className="p-6 sm:p-8 space-y-6">
             <div className="text-center md:text-left">
               <h2 className="text-2xl font-black text-[#3B0764] flex items-center justify-center md:justify-start gap-2">
@@ -85,7 +84,6 @@ export default function TeacherGatewayPage() {
               </p>
             </div>
 
-            {/* Login Form */}
             <form onSubmit={handleTeacherLogin} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-black text-[#7C3AED] uppercase tracking-wider block">Workspace Email</label>
@@ -124,21 +122,17 @@ export default function TeacherGatewayPage() {
 
             <div className="border-t-4 border-[#FAF5FF] my-4" />
 
-            {/* CTA Application Block for non-registered users */}
             <div className="bg-[#FAF5FF] border-2 border-[#E9D5FF] rounded-2xl p-4 text-center">
-              <p className="text-sm font-black text-[#3B0764]">New to EduFlow or don't have an instructor account?</p>
-              <p className="text-xs font-bold text-[#7E22CE] mt-1 mb-3">Submit your professional background profile for admin approval!</p>
+              <p className="text-sm font-black text-[#3B0764]">New to EduFlow?</p>
               <Link href="/teacher/apply">
-                <Button variant="outline" className="w-full rounded-full border-2 border-[#7C3AED] text-[#7C3AED] hover:bg-[#EDE9FE] font-black gap-2 text-sm bg-white">
+                <Button variant="outline" className="w-full mt-3 rounded-full border-2 border-[#7C3AED] text-[#7C3AED] hover:bg-[#EDE9FE] font-black gap-2 text-sm bg-white">
                   Join as an Instructor <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
-
           </div>
         </Card>
       </div>
-
     </div>
   );
 }

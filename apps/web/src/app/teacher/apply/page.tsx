@@ -38,7 +38,6 @@ export default function TeacherApplyPage() {
     setIsSubmitting(true);
 
     try {
-      // Assemble dynamic structural data fields into standard Multipart Form Payload
       const payload = new FormData();
       payload.append('name', formData.name.trim());
       payload.append('email', formData.email.trim());
@@ -49,7 +48,6 @@ export default function TeacherApplyPage() {
 
       const res = await fetch('/api/teacher/apply', {
         method: 'POST',
-        // Content-Type header must be omitted when sending FormData so the browser generates the boundary token safely
         body: payload,
       });
 
@@ -67,17 +65,27 @@ export default function TeacherApplyPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 font-nunito" style={{ background: 'linear-gradient(135deg, #FAF5FF 0%, #FEF9F0 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center p-4 font-nunito bg-slate-50">
       <div className="w-full max-w-xl space-y-4">
         <Link href="/" className="inline-flex items-center gap-2 text-sm font-bold text-[#7C3AED] hover:underline">
           <ArrowLeft className="h-4 w-4" /> Back to Main Screen
         </Link>
         <Card className="border-4 border-[#C4B5FD] bg-white shadow-xl rounded-3xl overflow-hidden">
-          <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] p-6 text-white text-center">
-            <span className="text-5xl">👩‍🏫</span>
-            <h1 className="text-2xl font-black mt-2">Join EduFlow Instructors</h1>
-            <p className="text-xs font-bold text-pink-100">Submit details for administrative verification</p>
+          
+          {/* 🌟 Refined Clean Header Section */}
+          <div className="text-center pt-10 pb-4">
+            {/* Made the emoji much larger (text-7xl) with an optional smooth hover/bounce feel */}
+            <span className="text-7xl block mb-3 select-none animate-bounce" style={{ animationDuration: '3s' }} role="img" aria-label="teacher">
+              👩‍🏫
+            </span>
+            <h1 className="text-3xl font-black text-[#3B0764] tracking-tight">
+              Join EduFlow Instructors
+            </h1>
+            <p className="mt-1.5 text-sm font-bold text-[#7E22CE] max-w-md mx-auto px-4">
+              Submit details for administrative verification
+            </p>
           </div>
+
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -116,14 +124,14 @@ export default function TeacherApplyPage() {
                 />
               </div>
 
-              {/* Enhanced File Upload Section Wrapper */}
+              {/* File Upload Section Wrapper */}
               <div>
                 <label className="text-sm font-black text-[#3B0764] block mb-1">Upload Professional CV / Resume</label>
                 <input
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileChange}
-                  accept=".pdf,.doc,.docx"
+                  accept="image/png,image/jpeg,image/jpg,.pdf,.doc,.docx"
                   className="hidden"
                   id="cv-upload-input"
                 />

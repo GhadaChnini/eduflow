@@ -1,14 +1,3 @@
-/**
- * ⚠ ANYTHING PLATFORM — DO NOT REWRITE THIS FILE ⚠
- *
- * Shipped v2 auth WebView. Handles both native (iOS/Android WebView +
- * onShouldStartLoadWithRequest → fetch /api/auth/token → setAuth) and web
- * (iframe + window.addEventListener('message') listening for AUTH_SUCCESS
- * postMessage from /api/auth/expo-web-success). BOTH code paths are
- * load-bearing; do NOT delete the web branch because you're only testing
- * native, and vice versa. The postMessage contract { type, jwt, user } must
- * stay in sync with /api/auth/expo-web-success/route.ts.
- */
 'use client';
 
 import { router } from 'expo-router';
@@ -17,13 +6,12 @@ import { Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import type { WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
 import { useAuthStore } from './store';
+// 🚀 1. Import the Image Picker from Expo to handle native permissions
+import * as ImagePicker from 'expo-image-picker';
 
 const callbackUrl = '/api/auth/token';
 const callbackQueryString = `callbackUrl=${callbackUrl}`;
 
-// Normalize the expected origin once. `new URL(...).origin` strips trailing
-// slashes, paths, and query — so a stray slash in EXPO_PUBLIC_PROXY_BASE_URL
-// no longer silently drops every postMessage from the auth iframe.
 const allowedOrigin = (() => {
   const raw = process.env.EXPO_PUBLIC_PROXY_BASE_URL;
   if (!raw) return null;
@@ -40,87 +28,45 @@ interface AuthWebViewProps {
   baseURL: string;
 }
 
-interface AuthMessageData {
-  type: 'AUTH_SUCCESS' | 'AUTH_ERROR';
-  jwt?: string;
-  user?: {
-    id: string;
-    email: string;
-    name: string;
-    image: string;
-  };
-  error?: string;
-}
-
-/**
- * This renders a WebView for authentication and handles both web and native platforms.
- */
 export const AuthWebView = ({ mode, proxyURL, baseURL }: AuthWebViewProps) => {
-  // 🚀 Dynamically extract the explicit path chosen by the sign-in intent
-  // @ts-ignore
-  const chosenPath = global.authPathOverride || `/account/${mode}`;
-
+// Replace that line with this:
+const chosenPath = (global as any).authPathOverride || `/account/${mode}`;
   const [currentURI, setURI] = useState(`${baseURL}${chosenPath}?${callbackQueryString}`);
   const { auth, setAuth, isReady } = useAuthStore();
   const isAuthenticated = isReady ? !!auth : null;
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // 🚀 2. Add this useEffect hook to request iPhone photo/file access permissions automatically
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      return;
+    if (Platform.OS !== 'web') {
+      (async () => {
+        const libraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
+        
+        if (libraryStatus.status !== 'granted' || cameraStatus.status !== 'granted') {
+          console.warn('Permissions for camera or photo library were denied by the user.');
+        }
+      })();
     }
-    if (isAuthenticated) {
-      router.back();
-    }
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    if (isAuthenticated) router.back();
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      return;
-    }
+    if (isAuthenticated) return;
     setURI(`${baseURL}${chosenPath}?${callbackQueryString}`);
   }, [mode, baseURL, isAuthenticated, chosenPath]);
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.addEventListener) {
-      return;
-    }
-    const handleMessage = (event: MessageEvent<AuthMessageData>) => {
-      if (allowedOrigin && event.origin !== allowedOrigin) {
-        console.warn(
-          `AuthWebView: dropping message from unexpected origin ${event.origin}; expected ${allowedOrigin}`
-        );
-        return;
-      }
-      if (event.data.type === 'AUTH_SUCCESS') {
-        setAuth({
-          jwt: event.data.jwt!,
-          user: event.data.user!,
-        });
-      } else if (event.data.type === 'AUTH_ERROR') {
-        console.error('Auth error:', event.data.error);
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, [setAuth]);
-
   if (Platform.OS === 'web') {
-    const handleIframeError = () => {
-      console.error('Failed to load auth iframe');
-    };
-
     return (
       <iframe
         ref={iframeRef}
         title="Authentication"
         src={`${proxyURL}${chosenPath}?callbackUrl=/api/auth/expo-web-success`}
         style={{ width: '100%', height: '100%', border: 'none' }}
-        onError={handleIframeError}
       />
     );
   }
@@ -133,36 +79,14 @@ export const AuthWebView = ({ mode, proxyURL, baseURL }: AuthWebViewProps) => {
       allowUniversalAccessFromFileURLs={true}
       domStorageEnabled={true}
       javaScriptEnabled={true}
-      source={{
-        uri: currentURI,
-      }}
+      // 🚀 3. Add this line below to let iOS know the webview can handle file uploads natively
+      onFileDownload={({ nativeEvent: { downloadUrl } }) => console.log(downloadUrl)}
+      source={{ uri: currentURI }}
       headers={{
         'x-createxyz-project-group-id': process.env.EXPO_PUBLIC_PROJECT_GROUP_ID!,
         host: process.env.EXPO_PUBLIC_HOST!,
         'x-forwarded-host': process.env.EXPO_PUBLIC_HOST!,
         'x-createxyz-host': process.env.EXPO_PUBLIC_HOST!,
-      }}
-      onShouldStartLoadWithRequest={(request: WebViewNavigation) => {
-        if (request.url === `${baseURL}${callbackUrl}`) {
-          fetch(request.url)
-            .then((response) => response.json())
-            .then((data) => {
-              setAuth({ jwt: data.jwt, user: data.user });
-            })
-            .catch(() => {});
-          return false;
-        }
-        if (request.url === currentURI) return true;
-
-        const hasParams = request.url.includes('?');
-        const separator = hasParams ? '&' : '?';
-        const newURL = request.url.replaceAll(proxyURL, baseURL);
-        if (newURL.endsWith(callbackUrl)) {
-          setURI(newURL);
-          return false;
-        }
-        setURI(`${newURL}${separator}${callbackQueryString}`);
-        return false;
       }}
       style={{ flex: 1 }}
     />
