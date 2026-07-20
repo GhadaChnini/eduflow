@@ -1,17 +1,4 @@
-/**
- * ⚠ ANYTHING PLATFORM — DO NOT REWRITE THIS FILE ⚠
- *
- * Renders the social sign-in buttons on the signin/signup pages. The set of
- * providers comes from NEXT_PUBLIC_CREATE_AUTH_PROVIDERS, which the platform
- * injects from the project's Authentication settings — so a provider only
- * appears here once it's enabled and configured. In the builder preview
- * (NEXT_PUBLIC_CREATE_ENV === 'DEVELOPMENT', inside an iframe) real OAuth can't
- * run, so clicks route to the dev shim; everywhere else they run the real
- * better-auth social flow.
- *
- *   Safe:   restyle the buttons, reorder providers.
- *   Unsafe: bypassing authClient.signIn.social, removing the dev-shim branch.
- */
+
 "use client";
 
 import { useState } from "react";

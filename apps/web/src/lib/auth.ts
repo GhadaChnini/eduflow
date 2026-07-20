@@ -1,20 +1,4 @@
-/**
- * ⚠ ANYTHING PLATFORM — DO NOT REWRITE THIS FILE ⚠
- *
- * Shipped v2 better-auth configuration. The hooks.before middleware (backfills
- * `name` from email), bearer() plugin (mobile Authorization: Bearer flow),
- * trustedOrigins list, and socialProviders block are ALL load-bearing. A prior
- * AI removed the name backfill and broke every signup with [body.name]
- * validation errors. DO NOT simplify this config without understanding why each
- * piece is present.
- *
- *   Safe:   add user fields to `user.additionalFields`, tune session options.
- *   Unsafe: removing hooks.before, the bearer plugin, or trustedOrigins;
- *           changing cookie attributes (sameSite:'none' is required for
- *           mobile iframes); changing the database pool; hand-editing the
- *           socialProviders block (the platform injects the OAuth credentials
- *           via env vars when a provider is enabled in project settings).
- */
+
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { argon2Verify } from 'argon2-wasm-edge';
 import { betterAuth } from 'better-auth';

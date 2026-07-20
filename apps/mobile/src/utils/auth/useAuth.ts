@@ -8,7 +8,7 @@ interface UseAuthReturn {
   signIn: () => void;
   signOut: () => void;
   signUp: () => void;
-  teacherSignIn: () => void; // 🚀 Added native function interface
+  teacherSignIn: () => void; 
   auth: Auth | null;
   setAuth: (auth: Auth | null) => void;
   initiate: () => void;
@@ -38,7 +38,7 @@ export const useAuth = (): UseAuthReturn => {
 
   const signIn = useCallback(() => {
     // @ts-ignore
-    global.authPathOverride = '/account/signin'; // 🌟 Route path for standard students
+    global.authPathOverride = '/account/signin'; 
     open({ mode: 'signin' });
   }, [open]);
 
@@ -48,10 +48,9 @@ export const useAuth = (): UseAuthReturn => {
     open({ mode: 'signup' });
   }, [open]);
 
-  // 🚀 New native function called directly by your teacher dashboard button
   const teacherSignIn = useCallback(() => {
     // @ts-ignore
-    global.authPathOverride = '/teacher'; // 🌟 Explicit path for separate teacher module
+    global.authPathOverride = '/teacher'; 
     open({ mode: 'signin' });
   }, [open]);
 
@@ -66,7 +65,7 @@ export const useAuth = (): UseAuthReturn => {
     signIn,
     signOut,
     signUp,
-    teacherSignIn, // 🚀 Exposed natively
+    teacherSignIn, 
     auth,
     setAuth,
     initiate,

@@ -6,7 +6,6 @@ import { Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import type { WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
 import { useAuthStore } from './store';
-// 🚀 1. Import the Image Picker from Expo to handle native permissions
 import * as ImagePicker from 'expo-image-picker';
 
 const callbackUrl = '/api/auth/token';
@@ -36,7 +35,6 @@ const chosenPath = (global as any).authPathOverride || `/account/${mode}`;
   const isAuthenticated = isReady ? !!auth : null;
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // 🚀 2. Add this useEffect hook to request iPhone photo/file access permissions automatically
   useEffect(() => {
     if (Platform.OS !== 'web') {
       (async () => {
@@ -79,7 +77,6 @@ const chosenPath = (global as any).authPathOverride || `/account/${mode}`;
       allowUniversalAccessFromFileURLs={true}
       domStorageEnabled={true}
       javaScriptEnabled={true}
-      // 🚀 3. Add this line below to let iOS know the webview can handle file uploads natively
       onFileDownload={({ nativeEvent: { downloadUrl } }) => console.log(downloadUrl)}
       source={{ uri: currentURI }}
       headers={{

@@ -5,8 +5,7 @@ import { Platform } from "react-native";
 
 const VISITOR_ID_KEY = "anything_analytics_visitor_id";
 
-// Mirror the gating used by Sentry / the TestFlight logger: only emit from
-// real (production) builds, never from the in-builder dev runtime.
+
 function isActive(): boolean {
 	return !__DEV__ && process.env.EXPO_PUBLIC_CREATE_ENV !== "DEVELOPMENT";
 }

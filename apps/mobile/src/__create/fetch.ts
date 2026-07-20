@@ -12,7 +12,7 @@ const getURLFromArgs = (...args: Parameters<typeof fetch>) => {
   if (urlArg instanceof Request) {
     return urlArg.url;
   }
-  // URL type may not be in the fetch signature for all TS environments
+
   if (typeof urlArg === 'object' && urlArg !== null && 'href' in urlArg) {
     return (urlArg as URL).href;
   }
@@ -56,7 +56,6 @@ const fetchToWeb = async function fetchWithHeaders(...args: Params) {
   }
 
   const isExternalFetch = !isFirstPartyURL(url);
-  // we should not add headers to requests that don't go to our own server
   if (isExternalFetch) {
     return expoFetch(input, init);
   }
