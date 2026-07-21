@@ -17,6 +17,7 @@
   },
   "packageManager": "yarn@4.12.0",
   "dependencies": {
+    "@react-native-community/datetimepicker": "8.4.4",
     "@vercel/blob": "^2.4.0",
     "expo-dev-client": "~6.0.21"
   }
